@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>9th Monthsary ❤️</title>
+  <!-- Font Awesome Icons (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ---------- style.css (embedded for single-file convenience) ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Quicksand', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #fff5f9 0%, #fce4ec 100%);
+      color: #4a2e3b;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="28" viewBox="0 0 24 28"><text font-family="Arial" font-size="22" y="22">❤️</text></svg>') 12 12, auto;
+    }
+
+    /* floating hearts background (canvas) */
+    #heart-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1.2rem 3rem;
+    }
+
+    /* sections */
+    section {
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      border-radius: 48px 24px 48px 24px;
+      padding: 2rem 1.8rem;
+      margin-bottom: 2.8rem;
+      box-shadow: 0 12px 32px rgba(233, 150, 180, 0.15);
+      transition: transform 0.2s;
+      border: 1px solid rgba(255, 220, 240, 0.3);
+    }
+
+    h1, h2 {
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .title-main {
+      font-size: 2.8rem;
+      background: linear-gradient(135deg, #f8b4c8, #d68c9e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 4px 12px rgba(255, 150, 180, 0.2);
+      display: inline-block;
+      margin-bottom: 0.2rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #7a5a6b;
+      font-weight: 400;
+      margin-top: -0.2rem;
+      margin-bottom: 1.8rem;
+      border-left: 4px solid #f3a0b5;
+      padding-left: 1rem;
+    }
+
+    /* characters row */
+    .characters-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 1.2rem 3rem;
+      margin: 1.2rem 0 0.8rem;
+    }
+
+    .character {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      filter: drop-shadow(0 8px 12px rgba(200, 120, 150, 0.2));
+      animation: floatBob 3s ease-in-out infinite;
+    }
+
+    .character:nth-child(2) {
+      animation-delay: 0.6s;
+    }
+
+    .character-avatar {
+      font-size: 6rem;
+      line-height: 1;
+      transition: transform 0.3s;
+      filter: drop-shadow(0 6px 10px rgba(170, 100, 130, 0.2));
+    }
+
+    .character-name {
+      background: rgba(255, 240, 245, 0.7);
+      backdrop-filter: blur(4px);
+      padding: 0.3rem 1.2rem;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #5e3f4b;
+      margin-top: 0.2rem;
+      border: 1px solid #ffd9e6;
+    }
+
+    /* speech bubble */
+    .speech-bubble {
+      background: white;
+      padding: 0.8rem 1.6rem;
+      border-radius: 40px 40px 40px 8px;
+      max-width: 280px;
+      margin: 0.5rem auto 0;
+      box-shadow: 0 6px 18px rgba(200, 120, 150, 0.2);
+      border: 1px solid #ffe2ef;
+      display: inline-block;
+      font-weight: 500;
+      color: #491f31;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 24px;
+      border-width: 12px 12px 0 0;
+      border-style: solid;
+      border-color: white transparent transparent transparent;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.02));
+    }
+
+    /* countdown grid */
+    .countdown-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.8rem 2.5rem;
+      margin: 1.2rem 0;
+    }
+
+    .countdown-item {
+      background: rgba(255, 235, 240, 0.6);
+      backdrop-filter: blur(4px);
+      padding: 0.8rem 1.8rem;
+      border-radius: 60px;
+      text-align: center;
+      border: 1px solid #ffdae8;
+      min-width: 120px;
+    }
+
+    .countdown-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #b35d7a;
+      line-height: 1.2;
+    }
+
+    .countdown-label {
+      font-size: 0.85rem;
+      color: #6f4c5a;
+      letter-spacing: 1px;
+    }
+
+    /* timeline & gallery */
+    .timeline-item, .gallery-item {
+      background: rgba(255, 248, 250, 0.6);
+      backdrop-filter: blur(4px);
+      padding: 1rem 1.5rem;
+      border-radius: 32px;
+      margin: 0.8rem 0;
+      border-left: 6px solid #f3a0b5;
+      transition: 0.2s;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1.2rem;
+      margin-top: 0.8rem;
+    }
+
+    .gallery-grid img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 30px;
+      box-shadow: 0 8px 18px rgba(180, 100, 130, 0.15);
+      transition: transform 0.3s, box-shadow 0.3s;
+      border: 2px solid white;
+    }
+
+    .gallery-grid img:hover {
+      transform: scale(1.02) rotate(-1deg);
+      box-shadow: 0 12px 28px rgba(200, 120, 150, 0.25);
+    }
+
+    .love-letter {
+      background: rgba(255, 245, 248, 0.6);
+      padding: 1.8rem;
+      border-radius: 40px;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      border: 1px solid #ffdae8;
+      backdrop-filter: blur(4px);
+      margin: 0.5rem 0;
+    }
+
+    .surprise-btn {
+      background: linear-gradient(145deg, #f8b4c8, #e687a3);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 600;
+      padding: 1rem 2.8rem;
+      border-radius: 80px;
+      box-shadow: 0 8px 24px rgba(210, 120, 150, 0.3);
+      transition: 0.2s;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 0.8rem 0;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .surprise-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 32px rgba(200, 100, 140, 0.4);
+    }
+
+    .surprise-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* modal / gift overlay */
+    .gift-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      flex-direction: column;
+      padding: 1.5rem;
+    }
+
+    .gift-box {
+      background: #fff5f8;
+      padding: 2.5rem 2rem;
+      border-radius: 70px 30px 70px 30px;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 30px 60px rgba(150, 70, 100, 0.3);
+      animation: popIn 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+      border: 2px solid #ffc1d4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gift-box h2 {
+      font-size: 2.2rem;
+      color: #b35d7a;
+      margin-bottom: 1rem;
+    }
+
+    .gift-box p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: #3f2832;
+      background: rgba(255, 240, 245, 0.6);
+      padding: 1rem;
+      border-radius: 50px;
+    }
+
+    .gift-close {
+      margin-top: 1.8rem;
+      background: #d68c9e;
+      border: none;
+      color: white;
+      padding: 0.7rem 2rem;
+      border-radius: 60px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* confetti / celebration */
+    .confetti-piece {
+      position: fixed;
+      width: 12px; height: 12px;
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: confettiFall 1.8s linear forwards;
+    }
+
+    .heart-float {
+      position: fixed;
+      font-size: 2rem;
+      pointer-events: none;
+      z-index: 9999;
+      animation: heartUp 2.4s ease-out forwards;
+    }
+
+    /* animations */
+    @keyframes floatBob {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(1deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translateY(120vh) rotate(720deg) scale(0.2); }
+    }
+
+    @keyframes heartUp {
+      0% { opacity: 0.9; transform: translateY(0) scale(0.6); }
+      100% { opacity: 0; transform: translateY(-300px) scale(1.6); }
+    }
+
+    /* responsiveness */
+    @media (max-width: 600px) {
+      .title-main { font-size: 2.2rem; }
+      .character-avatar { font-size: 4.2rem; }
+      .countdown-number { font-size: 1.8rem; }
+      .gift-box h2 { font-size: 1.8rem; }
+    }
+
+    /* smooth scroll padding */
+    .scroll-margin {
+      scroll-margin-top: 1.2rem;
+    }
+
+    /* background music button */
+    .music-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255, 240, 245, 0.8);
+      backdrop-filter: blur(6px);
+      border: 1px solid #ffc1d4;
+      border-radius: 60px;
+      padding: 0.7rem 1.2rem;
+      font-size: 1.3rem;
+      color: #a05a72;
+      box-shadow: 0 6px 16px rgba(200, 120, 150, 0.2);
+      cursor: pointer;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .music-btn i {
+      font-size: 1.4rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- floating hearts canvas -->
+  <canvas id="heart-canvas"></canvas>
+
+  <!-- main container -->
+  <div class="container">
+
+    <!-- Homepage -->
+    <section id="home" class="scroll-margin">
+      <h1 class="title-main">Happy 9th Monthsary ❤️</h1>
+      <div class="subtitle"></div>
+
+      <!-- characters -->
+      <div class="characters-row">
+        <div class="character" id="charMe">
+          <div class="character-avatar">😒</div>
+          <span class="character-name">You</span>
+        </div>
+        <div class="character" id="charPartner">
+          <div class="character-avatar">😜</div>
+          <span class="character-name">Me</span>
+        </div>
+      </div>
+
+      <!-- speech bubble (will be shown on click) -->
+      <div id="speechContainer" style="text-align: center; min-height: 80px;">
+        <div class="speech-bubble" id="speechBubble" style="display: none;">Happy 9th Monthsary, babbyyy</div>
+      </div>
+
+      <!-- countdown -->
+      <div class="countdown-grid" style="margin-top: 1.8rem;">
+        <div class="countdown-item"><span class="countdown-number" id="daysTogether">0</span><div class="countdown-label">Days Together</div></div>
+        <div class="countdown-item"><span class="countdown-number" id="daysToAnniversary">0</span><div class="countdown-label">Days to 1st Anniversary</div></div>
+      </div>
+    </section>
+
+    <!-- Love Letter -->
+    <section id="letter" class="scroll-margin">
+      <h2>💌</h2>
+      <div class="love-letter">
+        <p>Hello prettyyy,</p>
+        <p>Kahit na ang sungit mo at parati mo akong inaaway, love na love pa rin kita. Happy 9th Monthsary for us, sana kung susungitan mo ako is mag-sorry ka agad sa akin wahahahha joke, thankyou ulit sa love na binibigay mo. I love youuu! hindi gaano kahaba kasi matutulog kana agad kaya minadali ko na, sorryyy Iloveyou ulit, sorry huwag kang mainis ah.
+        <p style="margin-top: 1rem;"></p>
+      </div>
+    </section>
+
+  <script>
+    // ---------- script.js ----------
+    (function() {
+      // ----- Floating hearts canvas (background) -----
+      const canvas = document.getElementById('heart-canvas');
+      const ctx = canvas.getContext('2d');
+      let hearts = [];
+      let w, h;
+
+      function resizeCanvas() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      class Heart {
+        constructor() { this.reset(); }
+        reset() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h - h;
+          this.size = Math.random() * 18 + 8;
+          this.speed = Math.random() * 1.2 + 0.4;
+          this.opacity = Math.random() * 0.5 + 0.2;
+          this.angle = Math.random() * 0.4 - 0.2;
+        }
+        update() {
+          this.y += this.speed;
+          this.x += Math.sin(this.y * 0.008) * 0.4;
+          if (this.y > h + 40) this.reset();
+        }
+        draw() {
+          ctx.font = `${this.size}px "Segoe UI", "Arial Unicode MS", sans-serif`;
+          ctx.globalAlpha = this.opacity;
+          ctx.fillStyle = '#f7a1b5';
+          ctx.fillText('♥', this.x, this.y);
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      for (let i = 0; i < 28; i++) hearts.push(new Heart());
+
+      function animateHearts() {
+        ctx.clearRect(0, 0, w, h);
+        hearts.forEach(h => { h.update(); h.draw(); });
+        requestAnimationFrame(animateHearts);
+      }
+      animateHearts();
+
+      // ----- Countdown -----
+      const dayMs = 1000 * 60 * 60 * 24;
+      const startDate = new Date('2025-10-02'); // adjust to actual start date
+      const anniversaryDate = new Date('2026-10-02');
+
+      function updateCountdown() {
+        const now = new Date();
+        const nowDate = new Date(now);
+        const start = new Date(startDate);
+        const anniversary = new Date(anniversaryDate);
+
+        nowDate.setHours(0, 0, 0, 0);
+        start.setHours(0, 0, 0, 0);
+        anniversary.setHours(0, 0, 0, 0);
+
+        const diffDays = Math.floor((nowDate - start) / dayMs);
+        const diffToAnn = Math.floor((anniversary - nowDate) / dayMs);
+        document.getElementById('daysTogether').textContent = diffDays > 0 ? diffDays : 0;
+        document.getElementById('daysToAnniversary').textContent = diffToAnn > 0 ? diffToAnn : 0;
+      }
+      updateCountdown();
+      setInterval(updateCountdown, 86400000);
+
+      // ----- Celebration (click on character 'me') -----
+      const charMe = document.getElementById('charMe');
+      const speechBubble = document.getElementById('speechBubble');
+      let celebrationActive = false;
+
+      function triggerCelebration() {
+        if (celebrationActive) return;
+        celebrationActive = true;
+
+        // jump animation
+        charMe.style.animation = 'none';
+        charMe.offsetHeight; // reflow
+        charMe.style.animation = 'floatBob 0.6s ease 3';
+        setTimeout(() => {
+          charMe.style.animation = 'floatBob 3s ease-in-out infinite';
+        }, 1800);
+
+        // speech bubble
+        speechBubble.style.display = 'inline-block';
+        speechBubble.textContent = 'Happy 9th Monthsary, My Love! ❤️🥳';
+        setTimeout(() => {
+          speechBubble.style.display = 'none';
+        }, 4200);
+
+        // confetti
+        const colors = ['#f8b4c8', '#ff7b9c', '#f7d44a', '#7ac7f5', '#b38bff', '#ff9fbc'];
+        for (let i = 0; i < 60; i++) {
+          const el = document.createElement('div');
+          el.className = 'confetti-piece';
+          const size = Math.random() * 12 + 6;
+          el.style.width = size + 'px';
+          el.style.height = size * 0.6 + 'px';
+          el.style.background = colors[Math.floor(Math.random() * colors.length)];
+          el.style.left = (charMe.getBoundingClientRect().left + 30 + Math.random() * 60) + 'px';
+          el.style.top = (charMe.getBoundingClientRect().top - 10) + 'px';
+          el.style.transform = `rotate(${Math.random() * 360}deg)`;
+          el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 2200);
+        }
+
+        // floating hearts
+        for (let i = 0; i < 14; i++) {
+          const heart = document.createElement('div');
+          heart.className = 'heart-float';
+          heart.textContent = ['❤️','💖','🌸','✨','💕','🥰'][Math.floor(Math.random()*6)];
+          heart.style.left = (charMe.getBoundingClientRect().left + 20 + Math.random() * 40) + 'px';
+          heart.style.top = (charMe.getBoundingClientRect().top - 10) + 'px';
+          heart.style.fontSize = (Math.random() * 24 + 20) + 'px';
+          document.body.appendChild(heart);
+          setTimeout(() => heart.remove(), 2600);
+        }
+
+        setTimeout(() => { celebrationActive = false; }, 4000);
+      }
+
+      charMe.addEventListener('click', triggerCelebration);
+
+      // also partner click shows cute reaction (optional)
+      document.getElementById('charPartner').addEventListener('click', function() {
+        speechBubble.style.display = 'inline-block';
+        speechBubble.textContent = 'I love you! 💕';
+        setTimeout(() => { speechBubble.style.display = 'none'; }, 2000);
+      });
+
+      // ----- Surprise Gift -----
+      const surpriseBtn = document.getElementById('surpriseBtn');
+      const giftOverlay = document.getElementById('giftOverlay');
+      const closeGift = document.getElementById('closeGift');
+
+      surpriseBtn.addEventListener('click', function() {
+        giftOverlay.style.display = 'flex';
+        // extra sparkles
+        for (let i = 0; i < 30; i++) {
+          const sp = document.createElement('div');
+          sp.className = 'confetti-piece';
+          sp.style.background = ['#ffb7c5','#ffd966','#b38bff','#7ac7f5','#ff8aae'][Math.floor(Math.random()*5)];
+          sp.style.width = '8px'; sp.style.height = '8px';
+          sp.style.left = (window.innerWidth/2 - 60 + Math.random() * 120) + 'px';
+          sp.style.top = (window.innerHeight/2 - 40 + Math.random() * 80) + 'px';
+          sp.style.borderRadius = '50%';
+          document.body.appendChild(sp);
+          setTimeout(() => sp.remove(), 2500);
+        }
+        // hearts from box
+        for (let i=0; i<18; i++) {
+          const h = document.createElement('div');
+          h.className = 'heart-float';
+          h.textContent = ['❤️','💖','✨','💕','🌸'][Math.floor(Math.random()*5)];
+          h.style.left = (window.innerWidth/2 - 40 + Math.random() * 80) + 'px';
+          h.style.top = (window.innerHeight/2 - 20 + Math.random() * 40) + 'px';
+          h.style.fontSize = (Math.random()*28+18)+'px';
+          document.body.appendChild(h);
+          setTimeout(() => h.remove(), 2800);
+        }
+      });
+
+      closeGift.addEventListener('click', function() {
+        giftOverlay.style.display = 'none';
+      });
+      giftOverlay.addEventListener('click', function(e) {
+        if (e.target === giftOverlay) giftOverlay.style.display = 'none';
+      });
+
+      // ----- Background music (optional) -----
+      let audio = null;
+      let isPlaying = false;
+      const musicBtn = document.getElementById('musicToggle');
+      const musicLabel = document.getElementById('musicLabel');
+
+      musicBtn.addEventListener('click', function() {
+        if (!audio) {
+          // small royalty-free loop (silent placeholder)
+          audio = new Audio('data:audio/wav;base64,UklGRlAAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoAAACAAAAAwAAAAMAAAAD'); 
+          audio.loop = true;
+          audio.volume = 0.1;
+        }
+        if (isPlaying) {
+          audio.pause();
+          isPlaying = false;
+          musicLabel.textContent = 'Play';
+        } else {
+          audio.play().catch(()=>{});
+          isPlaying = true;
+          musicLabel.textContent = 'Pause';
+        }
+      });
+
+      // smooth scroll (all internal links)
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>
